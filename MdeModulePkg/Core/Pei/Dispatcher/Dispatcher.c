@@ -58,7 +58,7 @@ DiscoverPeimsAndOrderWithApriori (
 
   TempFileHandles = Private->TempFileHandles;
   TempFileGuid    = Private->TempFileGuid;
-
+  
   //
   // Go ahead to scan this FV, get PeimCount and cache FileHandles within it to TempFileHandles.
   //
@@ -1466,6 +1466,7 @@ PeiDispatcher (
         // reorder all PEIMs to ensure the PEIMs in Apriori file to get
         // dispatch at first.
         //
+        DEBUG ((DEBUG_ERROR, "Discover \n"));
         DiscoverPeimsAndOrderWithApriori (Private, CoreFvHandle);
       }
 
@@ -1476,16 +1477,21 @@ PeiDispatcher (
            PeimCount < Private->Fv[FvCount].PeimCount;
            PeimCount++)
       {
+        DEBUG ((DEBUG_ERROR, "Dispatchi %u \n",PeimCount));
         Private->CurrentPeimCount = PeimCount;
         PeimFileHandle            = Private->CurrentFileHandle = Private->CurrentFvFileHandles[PeimCount];
-
+      
         if (Private->Fv[FvCount].PeimState[PeimCount] == PEIM_STATE_NOT_DISPATCHED) {
+          DEBUG ((DEBUG_ERROR, "Not dispatched \n"));
           if (!DepexSatisfied (Private, PeimFileHandle, PeimCount)) {
+            DEBUG ((DEBUG_ERROR, "Not satisfied \n"));
             Private->PeimNeedingDispatch = TRUE;
           } else {
+            DEBUG ((DEBUG_ERROR, "Satisfied \n"));
             Status = CoreFvHandle->FvPpi->GetFileInfo (CoreFvHandle->FvPpi, PeimFileHandle, &FvFileInfo);
             ASSERT_EFI_ERROR (Status);
             if (FvFileInfo.FileType == EFI_FV_FILETYPE_FIRMWARE_VOLUME_IMAGE) {
+              DEBUG ((DEBUG_ERROR, "FV \n", __FUNCTION__, __LINE__));
               //
               // For FV type file, Produce new FvInfo PPI and FV HOB
               //
@@ -1508,6 +1514,7 @@ PeiDispatcher (
               //
               // For PEIM driver, Load its entry point
               //
+              DEBUG ((DEBUG_ERROR, "Load entry point \n", __FUNCTION__, __LINE__));
               Status = PeiLoadImage (
                          PeiServices,
                          PeimFileHandle,
