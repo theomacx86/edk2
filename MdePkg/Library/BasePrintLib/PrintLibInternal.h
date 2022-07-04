@@ -29,6 +29,7 @@
 #define ARGUMENT_REVERSED    BIT12
 #define COUNT_ONLY_NO_PRINT  BIT13
 #define UNSIGNED_TYPE        BIT14
+#define SIZET_TYPE           BIT15
 
 //
 // Record date and time information

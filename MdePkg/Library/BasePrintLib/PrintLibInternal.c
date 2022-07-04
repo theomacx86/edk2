@@ -720,6 +720,9 @@ BasePrintLibSPrintMarker (
             case 'l':
               Flags |= LONG_TYPE;
               break;
+            case 'z':
+              Flags |= SIZET_TYPE;
+              break;
             case '*':
               if ((Flags & PRECISION) == 0) {
                 Flags |= PAD_TO_WIDTH;
@@ -832,6 +835,12 @@ BasePrintLibSPrintMarker (
                 Value = VA_ARG (VaListMarker, int);
               } else {
                 Value = BASE_ARG (BaseListMarker, int);
+              }
+            } else if ((Flags & SIZET_TYPE) != 0) {
+              if (BaseListMarker == NULL) {
+                Value = VA_ARG (VaListMarker, UINTN);
+              } else {
+                Value = BASE_ARG (BaseListMarker, UINTN);
               }
             } else {
               if (BaseListMarker == NULL) {
