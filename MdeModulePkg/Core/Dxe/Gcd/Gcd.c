@@ -2308,21 +2308,26 @@ CoreInitializeMemoryServices (
     //
     // Skip all HOBs except Resource Descriptor HOBs
     //
+    DEBUG ((DEBUG_ERROR, "GET_HOB_TYPE (Hob) = %x\n", GET_HOB_TYPE (Hob)));
     if (GET_HOB_TYPE (Hob) != EFI_HOB_TYPE_RESOURCE_DESCRIPTOR) {
       continue;
     }
-
+    DEBUG ((DEBUG_ERROR, "Found EFI_HOB_TYPE_RESOURCE_DESCRIPTOR HOB\n"));
     //
     // Skip Resource Descriptor HOBs that do not describe tested system memory
     //
     ResourceHob = Hob.ResourceDescriptor;
-    if (ResourceHob->ResourceType != EFI_RESOURCE_SYSTEM_MEMORY) {
+    DEBUG ((DEBUG_ERROR, "ResourceHob->ResourceType = %x\n", ResourceHob->ResourceType));
+    if (ResourceHob->ResourceType != EFI_HOB_TYPE_RESOURCE_DESCRIPTOR) {
       continue;
     }
+    DEBUG ((DEBUG_ERROR, "Found EFI_HOB_TYPE_RESOURCE_DESCRIPTOR2 HOB\n"));
 
+    DEBUG ((DEBUG_ERROR, "ResourceHob->ResourceAttribute & MEMORY_ATTRIBUTE_MASK) = %x\n", ResourceHob->ResourceAttribute & MEMORY_ATTRIBUTE_MASK));
     if ((ResourceHob->ResourceAttribute & MEMORY_ATTRIBUTE_MASK) != TESTED_MEMORY_ATTRIBUTES) {
       continue;
     }
+    DEBUG ((DEBUG_ERROR, "Found TESTED_MEMORY_ATTRIBUTES HOB\n"));
 
     //
     // Skip Resource Descriptor HOBs that do not contain the PHIT range EfiFreeMemoryBottom..EfiFreeMemoryTop
@@ -2458,8 +2463,10 @@ CoreInitializeMemoryServices (
   // Convert the Resource HOB Attributes to an EFI Memory Capabilities mask
   //
   if ((Attributes & EFI_RESOURCE_ATTRIBUTE_MORE_RELIABLE) == EFI_RESOURCE_ATTRIBUTE_MORE_RELIABLE) {
+    DEBUG ((DEBUG_ERROR, "EfiGcdMemoryTypeMoreReliable capabilities\n"));
     Capabilities = CoreConvertResourceDescriptorHobAttributesToCapabilities (EfiGcdMemoryTypeMoreReliable, Attributes);
   } else {
+    DEBUG ((DEBUG_ERROR, "EfiGcdMemoryTypeSystemMemory capabilities\n"));
     Capabilities = CoreConvertResourceDescriptorHobAttributesToCapabilities (EfiGcdMemoryTypeSystemMemory, Attributes);
   }
 
@@ -2643,7 +2650,9 @@ CoreInitializeGcdServices (
   //
   // Allocate first memory region from the GCD by the DXE core
   //
+  DEBUG ((DEBUG_ERROR, "CoreGetMemorySpaceDescriptor (MemoryBaseAddress %Lx) \n", MemoryBaseAddress));
   Status = CoreGetMemorySpaceDescriptor (MemoryBaseAddress, &Descriptor);
+  DEBUG ((DEBUG_ERROR, "Descriptor.GcdMemoryType %x  \n", Descriptor.GcdMemoryType));
   if (!EFI_ERROR (Status)) {
     ASSERT (
       (Descriptor.GcdMemoryType == EfiGcdMemoryTypeSystemMemory) ||
